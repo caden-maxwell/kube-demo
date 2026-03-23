@@ -1,0 +1,57 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: vector-config
+data:
+  vector.toml: |
+    [sources.my_nginx_metrics]
+    type = "nginx_metrics"
+    endpoints = [ "http://localhost:8080/nginx_status" ]
+    scrape_interval_secs = 5
+
+    [sinks.my_prometheus_exporter]
+    type = "prometheus_exporter"
+    inputs = [ "my_nginx_metrics" ]
+    address = "0.0.0.0:9598"
+
+    [sinks.console]
+    type = "console"
+    inputs = ["my_nginx_metrics"]
+    encoding.codec = "json"
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: nginx-config
+data:
+  status.conf: |
+    server {
+        listen 127.0.0.1:8080;
+        server_name _;
+        location /nginx_status {
+            stub_status on;
+            access_log off;
+            allow 127.0.0.1;
+            deny all;
+        }
+    }
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: app-config
+data:
+  POSTGRES_DB: {{ .Values.postgres.db }}
+  POSTGRES_HOST: postgres
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: postgres-schema
+data:
+  init.sql: |
+    CREATE TABLE IF NOT EXISTS items (
+      id SERIAL PRIMARY KEY,
+      name TEXT NOT NULL,
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    );

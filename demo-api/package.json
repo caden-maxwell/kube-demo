@@ -1,0 +1,17 @@
+{
+  "name": "minikube-demo",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^5.2.1",
+    "pg": "^8.20.0",
+    "prom-client": "^15.1.3"
+  }
+}

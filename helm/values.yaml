@@ -1,0 +1,33 @@
+frontend:
+  image:
+    repository: demo-web
+    tag: 1.0.3
+    imagePullPolicy: IfNotPresent
+  service:
+    port: 80
+backend:
+  image:
+    repository: demo-api
+    tag: 1.0.1
+    imagePullPolicy: IfNotPresent
+  service:
+    port: 3000
+  apiBasePath: /api
+postgres:
+  user: user
+  password: password
+  db: demo
+ingress:
+  host: demo.home
+resources:
+  requests:
+    cpu: 100m
+    memory: 128Mi
+  limits:
+    cpu: 500m
+    memory: 256Mi
+hpa:
+  enabled: true
+  minReplicas: 2
+  maxReplicas: 5
+  targetCPUUtilizationPercentage: 50

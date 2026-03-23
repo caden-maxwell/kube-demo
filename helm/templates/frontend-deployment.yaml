@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-web
+spec:
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-web
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-web
+    spec:
+      containers:
+        - name: web
+          image: {{ .Values.frontend.image.repository }}:{{ .Values.frontend.image.tag }}
+          imagePullPolicy: {{ .Values.frontend.image.imagePullPolicy }}
+          ports:
+            - name: web-port
+              containerPort: 80
+            - name: metrics-port
+              containerPort: 9598
+          resources:
+            requests:
+              cpu: {{ .Values.resources.requests.cpu }}
+              memory: {{ .Values.resources.requests.memory }}
+            limits:
+              cpu: {{ .Values.resources.limits.cpu }}
+              memory: {{ .Values.resources.limits.memory }}
+          volumeMounts:
+            - name: nginx-config
+              mountPath: /etc/nginx/conf.d/status.conf
+              subPath: status.conf
+          env:
+            - name: API_BASE_URL
+              value: {{ .Values.backend.apiBasePath }}
+
+        - name: metrics
+          image: timberio/vector:0.54.0-alpine
+          imagePullPolicy: IfNotPresent
+          command: ["vector", "-c", "/etc/vector/vector.toml"]
+          volumeMounts:
+            - name: vector-config
+              mountPath: /etc/vector
+      volumes:
+        - name: nginx-config
+          configMap:
+            name: nginx-config
+        - name: vector-config
+          configMap:
+            name: vector-config
