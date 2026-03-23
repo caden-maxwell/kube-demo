@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# deploy.sh - Build API or web Docker image, push to repo, and upgrade Helm release
+# build-deploy.sh - Builds API or web Docker image and upgrades Helm release
 
 minikube status > /dev/null
 rc=$?
@@ -30,16 +30,14 @@ if [[ -n "$(docker images -q ${IMAGE_REPO}:${IMAGE_TAG})" ]]; then
     exit 1
 fi
 
-# Build Docker image
 echo "Building Docker image ${IMAGE_REPO}:${IMAGE_TAG}"
 docker build -t ${IMAGE_REPO}:${IMAGE_TAG} ${IMAGE_REPO}
 
-# Modify tag in helm values file
+# Update tag in helm values
 echo "Updating Helm values for image ${IMAGE_REPO}:${IMAGE_TAG}"
 section=$( [ "$IMAGE_TYPE" = "web" ] && echo "frontend" || echo "backend" )
 yq -iy ".${section}.image.tag = \"${IMAGE_TAG}\"" ${CHART_PATH}/values.yaml
 
-# Upgrade Helm release with new image tag
 echo "Upgrading Helm release ${HELM_RELEASE} with image tag ${IMAGE_TAG}"
 helm upgrade ${HELM_RELEASE} ${CHART_PATH}
 

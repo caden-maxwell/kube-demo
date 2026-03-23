@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
-
-# This script adds demo host entries to /etc/hosts. This is particularly useful
-# in WSL, where /etc/hosts is regenerated on restart
+# setup-hosts.sh - Adds demo host entries to /etc/hosts. This is particularly useful
+#   in WSL, where /etc/hosts is regenerated on restart
 
 minikube status > /dev/null
 rc=$?
