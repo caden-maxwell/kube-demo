@@ -12,7 +12,7 @@ backend:
     imagePullPolicy: IfNotPresent
   service:
     port: 3000
-  apiBasePath: /api
+  apiBasePath: /api/v1
 postgres:
   user: user
   password: password

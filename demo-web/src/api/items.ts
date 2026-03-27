@@ -1,14 +1,13 @@
 import type { Item } from "../types/Item";
-
-const API_BASE = window.APP_CONFIG?.API_BASE_URL || "/api";
+import { API_BASE_URL } from "../config";
 
 export async function fetchItems(): Promise<Item[]> {
-  const res = await fetch(`${API_BASE}/items`);
+  const res = await fetch(`${API_BASE_URL}/items`);
   return res.json();
 }
 
 export async function createItem(name: string): Promise<Item> {
-  const res = await fetch(`${API_BASE}/items`, {
+  const res = await fetch(`${API_BASE_URL}/items`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",

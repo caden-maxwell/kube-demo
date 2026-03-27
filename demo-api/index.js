@@ -3,8 +3,8 @@ const { Pool } = require('pg')
 const { collectDefaultMetrics, Registry, Counter, Histogram } = require('prom-client');
 
 const app = express();
-const port = process.env.PORT || 3000;
-const basePath = process.env.API_BASE_PATH || "/api";
+const port = process.env.PORT;
+const basePath = process.env.API_BASE_PATH;
 
 const register = new Registry();
 collectDefaultMetrics({ register });
