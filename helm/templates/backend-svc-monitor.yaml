@@ -9,6 +9,6 @@ spec:
     matchLabels:
       app: {{ .Release.Name }}-api
   endpoints:
-    - port: http-api
-      path: /metrics
-      interval: 5s
+  - port: http-api
+    path: /metrics
+    interval: 5s

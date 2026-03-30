@@ -1,0 +1,75 @@
+x-pg-env: &pg-env
+  POSTGRES_DB: demo
+  POSTGRES_USER: demo
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+
+services:
+  postgres:
+    image: postgres:18-alpine
+    environment:
+      <<: *pg-env
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $$POSTGRES_USER -d $$POSTGRES_DB"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+      start_interval: 1s
+    ports:
+    - "5432:5432"
+    volumes:
+    - postgres-data:/var/lib/postgresql
+
+  migrate:
+    build:
+      context: ./demo-api
+      target: base
+    command: ["npm", "run", "migrate"]
+    environment:
+      POSTGRES_HOST: postgres
+      <<: *pg-env
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  backend:
+    build:
+      context: ./demo-api
+      target: development
+    environment:
+      PORT: 3000
+      API_BASE_PATH: /api
+      POSTGRES_HOST: postgres
+      <<: *pg-env
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+    ports:
+    - "3000:3000"
+    volumes:
+    - ./demo-api/index.js:/app/index.js
+    - ./demo-api/package.json:/app/package.json
+    - ./demo-api/package-lock.json:/app/package-lock.json
+
+  frontend:
+    build:
+      context: ./demo-web
+      target: development
+    environment:
+      API_BASE_PATH: /api
+      PROXY_API_URL: http://backend:3000
+      CONF_TMP_DIR: /app/public
+      # This avoids the rendered config being placed on the host machine
+      CONF_OUT_DIR: /app
+    ports:
+    - "5173:5173"
+    volumes:
+    - ./demo-web/index.html:/app/index.html
+    - ./demo-web/vite.config.js:/app/vite.config.js
+    - ./demo-web/src:/app/src
+    - ./demo-web/public:/app/public
+    - ./demo-web/package.json:/app/package.json
+    - ./demo-web/package-lock.json:/app/package-lock.json
+
+volumes:
+  postgres-data:

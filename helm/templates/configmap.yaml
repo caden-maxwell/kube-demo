@@ -43,15 +43,3 @@ metadata:
 data:
   POSTGRES_DB: {{ .Values.postgres.db }}
   POSTGRES_HOST: postgres
----
-apiVersion: v1
-kind: ConfigMap
-metadata:
-  name: postgres-schema
-data:
-  init.sql: |
-    CREATE TABLE IF NOT EXISTS items (
-      id SERIAL PRIMARY KEY,
-      name TEXT NOT NULL,
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-    );

@@ -1,13 +1,21 @@
 import type { Item } from "../types/Item";
-import { API_BASE_URL } from "../config";
+import { config } from "../config";
 
-export async function fetchItems(): Promise<Item[]> {
-  const res = await fetch(`${API_BASE_URL}/items`);
+async function handleResponse(res: Response) {
+  if (!res.ok) {
+    const error = await res.text();
+    throw new Error(error || "Request failed");
+  }
   return res.json();
 }
 
+export async function fetchItems(): Promise<Item[]> {
+  const res = await fetch(`${config.API_BASE_PATH}/items`);
+  return handleResponse(res);
+}
+
 export async function createItem(name: string): Promise<Item> {
-  const res = await fetch(`${API_BASE_URL}/items`, {
+  const res = await fetch(`${config.API_BASE_PATH}/items`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -15,5 +23,5 @@ export async function createItem(name: string): Promise<Item> {
     body: JSON.stringify({ name }),
   });
 
-  return res.json();
+  return handleResponse(res);
 }

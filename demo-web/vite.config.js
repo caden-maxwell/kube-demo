@@ -1,0 +1,12 @@
+import { defineConfig, loadEnv } from 'vite'
+
+export default defineConfig(({ mode }) => {
+    const env = loadEnv(mode, process.cwd(), '');
+    return {
+        server: {
+            proxy: {
+                [env.API_BASE_PATH]: env.PROXY_API_URL,
+            },
+        },
+    };
+})

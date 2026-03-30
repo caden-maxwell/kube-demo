@@ -9,10 +9,6 @@
 </head>
 
 <body>
-  <div id="app"></div>
-  <script type="module" src="/config.js"></script>
-  <!-- <script type="module" src="/src/vite.ts"></script> -->
-
   <h1>Items</h1>
 
   <form id="item-form">
@@ -20,9 +16,12 @@
     <button type="submit">Add Item</button>
   </form>
 
+  <div id="status"></div>
+
   <h2>Current Items</h2>
   <ul id="items-list"></ul>
 
+  <script src="/config.js"></script>
   <script type="module" src="/src/main.ts"></script>
 </body>
 

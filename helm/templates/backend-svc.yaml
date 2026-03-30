@@ -9,6 +9,6 @@ spec:
   selector:
     app: {{ .Release.Name }}-api
   ports:
-    - name: http-api
-      port: {{ .Values.backend.service.port }}
-      targetPort: api-port
+  - name: http-api
+    port: 3000
+    targetPort: api-port

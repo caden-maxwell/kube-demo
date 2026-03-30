@@ -1,10 +1,12 @@
 {
-  "name": "minikube-demo",
+  "name": "demo-api",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js",
+    "migrate": "node migrate"
   },
   "keywords": [],
   "author": "",
@@ -13,5 +15,9 @@
     "express": "^5.2.1",
     "pg": "^8.20.0",
     "prom-client": "^15.1.3"
+  },
+  "type": "module",
+  "devDependencies": {
+    "nodemon": "^3.1.14"
   }
 }

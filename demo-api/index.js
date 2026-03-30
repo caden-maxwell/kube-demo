@@ -1,6 +1,6 @@
-const express = require('express');
-const { Pool } = require('pg')
-const { collectDefaultMetrics, Registry, Counter, Histogram } = require('prom-client');
+import express, { json, urlencoded } from 'express';
+import { Pool } from 'pg';
+import { collectDefaultMetrics, Registry, Counter, Histogram } from 'prom-client';
 
 const app = express();
 const port = process.env.PORT;
@@ -23,14 +23,19 @@ const requestDuration = new Histogram({
 });
 register.registerMetric(requestDuration);
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(json());
+app.use(urlencoded({ extended: true }));
 app.use((req, res, next) => {
     const end = requestDuration.startTimer({ method: req.method, route: req.path });
     res.on('finish', () => {
         end({ status_code: res.statusCode });
     });
     next();
+});
+
+// Add fake delay to simulate network latency
+app.use((req, res, next) => {
+    setTimeout(next, 50);
 });
 
 const pool = new Pool({
@@ -78,7 +83,7 @@ app.get('/metrics', async (req, res) => {
     res.end(await register.metrics());
 });
 
-app.get('/healthz', (req, res) => {
+app.get('/livez', (req, res) => {
     res.status(200).send('OK');
 });
 

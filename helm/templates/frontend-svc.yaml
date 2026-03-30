@@ -9,9 +9,9 @@ spec:
   selector:
     app: {{ .Release.Name }}-web
   ports:
-    - name: http-web
-      port: {{ .Values.frontend.service.port }}
-      targetPort: web-port
-    - name: metrics-web
-      port: 9090
-      targetPort: metrics-port
+  - name: http-web
+    port: {{ .Values.frontend.service.port }}
+    targetPort: web-port
+  - name: metrics-web
+    port: 9090
+    targetPort: metrics-port
