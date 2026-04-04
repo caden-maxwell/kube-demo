@@ -111,3 +111,7 @@ process.on('SIGTERM', () => {
         });
     });
 });
+
+pool.on('error', (err) => {
+  console.error('Unexpected DB error', err);
+});
